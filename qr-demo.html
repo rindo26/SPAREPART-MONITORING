@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner Demo - Sparepart System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #c8102e 0%, #e53935 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(200, 16, 46, 0.3);
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .demo-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #c8102e;
+        }
+
+        .demo-card h2 {
+            color: #c8102e;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .demo-card h3 {
+            color: #333;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            text-transform: uppercase;
+            color: #666;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #c8102e;
+            box-shadow: 0 0 10px rgba(200, 16, 46, 0.2);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #c8102e 0%, #e53935 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(200, 16, 46, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #e8e8e8;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-warning {
+            background: #fd7e14;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e56a00;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(253, 126, 20, 0.3);
+        }
+
+        .qr-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 15px 0;
+            min-height: 250px;
+        }
+
+        #qrCodeGenerator canvas {
+            display: block;
+            border: 2px solid #c8102e;
+            border-radius: 6px;
+            padding: 10px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .qr-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .qr-info strong {
+            color: #c8102e;
+        }
+
+        .scan-result {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            min-height: 60px;
+        }
+
+        .result-success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 600;
+            animation: slideIn 0.3s ease;
+        }
+
+        .result-error {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 600;
+            animation: slideIn 0.3s ease;
+        }
+
+        .result-info {
+            background: #d1ecf1;
+            border: 2px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 6px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .database-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .database-table thead {
+            background: linear-gradient(135deg, #c8102e 0%, #e53935 100%);
+            color: white;
+        }
+
+        .database-table th,
+        .database-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .database-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .database-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-in {
+            background: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-out {
+            background: #fd7e14;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .quantity-badge {
+            background: #007bff;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 22px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+
+        .features {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            border-left: 5px solid #c8102e;
+        }
+
+        .features h2 {
+            color: #c8102e;
+            margin-bottom: 20px;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .feature-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #c8102e;
+        }
+
+        .feature-item h4 {
+            color: #c8102e;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .feature-item p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📱 QR Code Scanner Demo</h1>
+            <p>Sistem Pelacakan Sparepart dengan QR Code Real-time</p>
+        </header>
+
+        <div class="features">
+            <h2>✨ Fitur Unggulan</h2>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>🔄 Generate QR Code</h4>
+                    <p>Buat QR code otomatis untuk setiap ID sparepart yang ditambahkan</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📥 Barang Masuk</h4>
+                    <p>Catat barang masuk dengan scan QR code - otomatis update stock</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📤 Barang Keluar</h4>
+                    <p>Catat barang keluar dengan scan QR code - kurangi stock otomatis</p>
+                </div>
+                <div class="feature-item">
+                    <h4>💾 Database Real-time</h4>
+                    <p>Semua transaksi tersimpan otomatis di database sistem</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-grid">
+            <!-- QR Code Generator -->
+            <div class="demo-card">
+                <h2>🎯 Generator QR Code</h2>
+                <div class="input-group">
+                    <label for="itemId">ID Sparepart</label>
+                    <input type="text" id="itemId" placeholder="Contoh: SP-001" value="">
+                </div>
+
+                <div class="input-group">
+                    <label for="itemName">Nama Barang</label>
+                    <input type="text" id="itemName" placeholder="Contoh: Filter Oli" value="">
+                </div>
+
+                <div class="input-group">
+                    <label for="itemQty">Jumlah</label>
+                    <input type="number" id="itemQty" placeholder="Jumlah stok" value="0" min="0">
+                </div>
+
+                <button class="btn-primary" onclick="generateQRCode()">📱 Generate QR Code</button>
+
+                <div class="qr-display">
+                    <div id="qrCodeGenerator"></div>
+                </div>
+
+                <div class="qr-info" id="qrInfo">
+                    <strong>Info:</strong> Masukkan ID dan klik tombol untuk generate QR code
+                </div>
+            </div>
+
+            <!-- QR Code Scanner -->
+            <div class="demo-card">
+                <h2>🔍 Scanner QR Code</h2>
+                <div class="input-group">
+                    <label for="scanInput">Scan atau Masukkan ID</label>
+                    <input type="text" id="scanInput" placeholder="Arahkan scanner atau ketik ID..." autofocus>
+                </div>
+
+                <div class="input-group">
+                    <label for="scanType">Tipe Transaksi</label>
+                    <select id="scanType">
+                        <option value="in">📥 Barang Masuk</option>
+                        <option value="out">📤 Barang Keluar</option>
+                    </select>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-success" onclick="processScan()">✓ Proses Scan</button>
+                    <button class="btn-secondary" onclick="clearScan()">🗑️ Bersihkan</button>
+                </div>
+
+                <div class="scan-result" id="scanResult"></div>
+            </div>
+        </div>
+
+        <!-- Database Table -->
+        <div class="demo-card">
+            <h2>📊 Database Transaksi Real-time</h2>
+            <p style="color: #666; margin-bottom: 15px; font-size: 14px;">
+                Semua transaksi scan QR code akan tercatat di tabel berikut secara real-time
+            </p>
+            <div style="overflow-x: auto;">
+                <table class="database-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>ID Sparepart</th>
+                            <th>Nama Barang</th>
+                            <th>Jumlah</th>
+                            <th>Tipe</th>
+                            <th>Waktu Transaksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionTable">
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                📭 Belum ada transaksi. Mulai scan QR code untuk merekam transaksi!
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let items = JSON.parse(localStorage.getItem('demoItems')) || {};
+        let transactions = JSON.parse(localStorage.getItem('demoTransactions')) || [];
+
+        // Generate QR Code
+        function generateQRCode() {
+            const id = document.getElementById('itemId').value.trim();
+            const name = document.getElementById('itemName').value.trim();
+            const qty = document.getElementById('itemQty').value.trim();
+
+            if (!id || !name || !qty) {
+                alert('Mohon isi semua field!');
+                return;
+            }
+
+            if (!(id in items)) {
+                items[id] = { name, qty: parseInt(qty) };
+                localStorage.setItem('demoItems', JSON.stringify(items));
+            }
+
+            const qrContainer = document.getElementById('qrCodeGenerator');
+            qrContainer.innerHTML = '';
+            new QRCode(qrContainer, {
+                text: id,
+                width: 200,
+                height: 200,
+                colorDark: '#c8102e',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            document.getElementById('qrInfo').innerHTML = `
+                <strong>QR Code Generated:</strong><br>
+                ID: ${id}<br>
+                Nama: ${name}<br>
+                Stok: ${qty} unit<br>
+                <br>
+                <em>📱 Arahkan camera untuk scan atau masukkan ID di kolom "Scan atau Masukkan ID"</em>
+            `;
+        }
+
+        // Process Scan
+        function processScan() {
+            const scanInput = document.getElementById('scanInput').value.trim();
+            const scanType = document.getElementById('scanType').value;
+            const resultDiv = document.getElementById('scanResult');
+
+            if (!scanInput) {
+                resultDiv.innerHTML = '<div class="result-error">❌ Masukkan ID atau scan QR code!</div>';
+                return;
+            }
+
+            if (!(scanInput in items)) {
+                resultDiv.innerHTML = '<div class="result-error">❌ ID tidak ditemukan dalam database!</div>';
+                return;
+            }
+
+            const item = items[scanInput];
+            const timestamp = new Date().toLocaleString('id-ID');
+
+            // Update quantity
+            if (scanType === 'in') {
+                item.qty += 1;
+            } else if (item.qty > 0) {
+                item.qty -= 1;
+            } else {
+                resultDiv.innerHTML = '<div class="result-error">❌ Stok tidak cukup untuk keluar!</div>';
+                return;
+            }
+
+            // Record transaction
+            transactions.push({
+                id: scanInput,
+                name: item.name,
+                qty: scanType === 'in' ? 1 : -1,
+                type: scanType,
+                timestamp: timestamp
+            });
+
+            localStorage.setItem('demoItems', JSON.stringify(items));
+            localStorage.setItem('demoTransactions', JSON.stringify(transactions));
+
+            const statusBadge = scanType === 'in' 
+                ? '<span class="status-in">📥 MASUK</span>'
+                : '<span class="status-out">📤 KELUAR</span>';
+
+            resultDiv.innerHTML = `
+                <div class="result-success">
+                    ✓ Transaksi Berhasil Dicatat<br>
+                    ${statusBadge}<br>
+                    ${item.name} (${scanInput})<br>
+                    Stok Sekarang: <strong>${item.qty} unit</strong><br>
+                    <small>${timestamp}</small>
+                </div>
+            `;
+
+            updateTransactionTable();
+            document.getElementById('scanInput').value = '';
+            document.getElementById('scanInput').focus();
+        }
+
+        // Clear Scan
+        function clearScan() {
+            document.getElementById('scanInput').value = '';
+            document.getElementById('scanResult').innerHTML = '';
+            document.getElementById('scanInput').focus();
+        }
+
+        // Update Transaction Table
+        function updateTransactionTable() {
+            const tbody = document.getElementById('transactionTable');
+            if (transactions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">📭 Belum ada transaksi</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = transactions.map((txn, idx) => {
+                const badge = txn.type === 'in' 
+                    ? '<span class="status-in">📥 Masuk</span>'
+                    : '<span class="status-out">📤 Keluar</span>';
+                return `
+                    <tr>
+                        <td>${idx + 1}</td>
+                        <td><strong>${txn.id}</strong></td>
+                        <td>${txn.name}</td>
+                        <td><span class="quantity-badge">${Math.abs(txn.qty)} unit</span></td>
+                        <td>${badge}</td>
+                        <td><small>${txn.timestamp}</small></td>
+                    </tr>
+                `;
+            }).reverse().join('');
+        }
+
+        // Handle Enter key
+        document.getElementById('scanInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') processScan();
+        });
+
+        // Load data on page load
+        updateTransactionTable();
+    </script>
+</body>
+</html>

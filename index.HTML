@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sparepart Monitoring System</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="thumb_ippi-removebg-preview.png">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen active">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="login-logo">📦</div>
+                    <h1>Sparepart Stock Monitoring</h1>
+                    <p>Sistem Manajemen Inventory</p>
+                </div>
+
+                <form id="loginForm" class="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="loginUsername">Username</label>
+                        <input type="text" id="loginUsername" placeholder="Masukkan username" required autocomplete="off">
+                        <span class="input-icon">👤</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Masukkan password" required autocomplete="off">
+                        <span class="input-icon">🔒</span>
+                    </div>
+
+                    <div class="remember-me">
+                        <input type="checkbox" id="rememberMe">
+                        <label for="rememberMe">Ingat saya</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-login">🔓 Masuk</button>
+
+                    <div id="loginError" class="login-error" style="display: none;"></div>
+                </form>
+
+                <div class="login-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App (Hidden until login) -->
+    <div id="mainApp" class="main-app" style="display: none;">
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <span class="icon">
+                    <img src="673c0b02b4e6a4cc348369675d3f665e.webp" alt="Logo" class="brand-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block'">
+                    <span class="fallback"></span>
+                </span>
+                <h1>Sparepart Stock Monitoring</h1>
+            </div>
+            <div class="navbar-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total Items</span>
+                    <span class="stat-value" id="totalItems">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Total Stock</span>
+                    <span class="stat-value" id="totalStock">0</span>
+                </div>
+                <div class="stat-item user-info">
+                    <span class="stat-label">User</span>
+                    <span class="stat-value" id="currentUser">-</span>
+                </div>
+                <!-- Hamburger Menu -->
+                <div class="hamburger-menu-container">
+                    <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleHamburgerMenu()" title="Menu">≡</button>
+                    <div class="hamburger-dropdown" id="hamburgerDropdown">
+                        <!-- Account Info -->
+                        <div class="dropdown-header">
+                            <div class="account-info">
+                                <div class="account-avatar">👤</div>
+                                <div class="account-details">
+                                    <p class="account-username" id="dropdownUser">User</p>
+                                    <p class="account-status">Logged In</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Account Stats -->
+                        <div class="account-stats-dropdown">
+                            <div class="account-stat-row">
+                                <span class="account-stat-label">Status:</span>
+                                <span class="account-stat-value">✅ Active</span>
+                            </div>
+                            <div class="account-stat-row">
+                                <span class="account-stat-label">Last Login:</span>
+                                <span class="account-stat-value" id="lastLoginTime">Just now</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Divider -->
+                        <div class="dropdown-divider"></div>
+                        
+                        <!-- Logout -->
+                        <button class="dropdown-item logout-item" onclick="handleLogout()">
+                            <span class="item-icon">🚪</span>
+                            <span class="item-text">Keluar</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-menu">
+            <button class="menu-btn active" onclick="showSection('inventory')">
+                <span class="menu-icon">📋</span> Inventory
+            </button>
+            <button class="menu-btn" onclick="showSection('catalog')">
+                <span class="menu-icon">🖼️</span> Catalog
+            </button>
+            <button class="menu-btn" onclick="showSection('addItem')">
+                <span class="menu-icon">➕</span> Tambah Item
+            </button>
+            <button class="menu-btn" onclick="showSection('qrScanner')">
+                <span class="menu-icon">📱</span> QR Scanner
+            </button>
+            <!-- Sidebar CODE128 entry removed -->
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- QR Code Scanner Section -->
+        <section id="qrScanner" class="section qr-scanner-section">
+            <div class="section-header">
+                <h2>📱 Scanner QR Code Barang</h2>
+                <p class="section-subtitle">Scan QR code untuk menambahkan barang ke inventory</p>
+            </div>
+            
+            <!-- Hint Box for Scanning -->
+            <div class="scanner-hint">
+                <h4>💡 Tips Scanning yang Baik:</h4>
+                <ul class="hint-list">
+                    <li>📍 Arahkan QR code ke tengah area kuning/focus box</li>
+                    <li>💡 Pastikan pencahayaan cukup terang</li>
+                    <li>🙌 Tahan kamera tetap stabil</li>
+                    <li>📏 QR code harus jelas terlihat dan tidak blur</li>
+                    <li>⚡ Scanner akan otomatis membaca saat terdeteksi</li>
+                </ul>
+            </div>
+            
+            <div class="scanner-wrapper">
+                <div id="qr-reader" class="qr-reader"></div>
+                <div class="scanner-controls">
+                    <button id="startBtn" class="btn btn-primary">▶️ Mulai Scan</button>
+                    <button id="stopBtn" class="btn btn-secondary" style="display: none;">⏹️ Hentikan</button>
+                    <button class="btn btn-danger" onclick="exitQRScannerToInventory()">🚪 Kembali</button>
+                </div>
+            </div>
+
+            <div id="result" class="qr-result-display">
+                <p class="empty-message">Belum ada hasil scan</p>
+            </div>
+
+            <div class="result-actions" style="display: none;" id="resultActions">
+                <button id="copyBtn" class="btn btn-info">📋 Salin</button>
+                <button id="clearBtn" class="btn btn-danger">🗑️ Hapus</button>
+                <button id="addToInventoryBtn" class="btn btn-success">➕ Tambah ke Inventory</button>
+            </div>
+
+            <div id="addToTableForm" class="add-to-table-form" style="display: none;">
+                <h3>Tambah Barang ke Inventory</h3>
+                <div class="form-group">
+                    <label>ID Sparepart (dari QR):</label>
+                    <input type="text" id="qrScannedId" readonly class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Nama Barang:</label>
+                    <input type="text" id="qrScannedName" placeholder="Masukkan nama barang" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Customer:</label>
+                    <input type="text" id="qrScannedCustomer" placeholder="Masukkan nama customer" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Alamat Part:</label>
+                    <input type="text" id="qrScannedAddress" placeholder="Masukkan alamat part (lokasi)" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Quantity:</label>
+                    <input type="number" id="qrScannedQuantity" placeholder="0" min="1" class="form-input">
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="submitQRScannedItem()" class="btn btn-success">✅ Tambah Item</button>
+                    <button type="button" onclick="cancelAddToTable()" class="btn btn-secondary">❌ Batal</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- CODE128 scanner section removed -->
+
+        <!-- Inventory Section -->
+        <section id="inventory" class="section active">
+            <div class="section-header">
+                <h2>Daftar Inventory</h2>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="🔍 Cari ID, Customer, atau Nama..." onkeyup="filterTable()">
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>ID Sparepart</th>
+                            <th>Nama Barang</th>
+                            <th>Customer</th>
+                            <th>Quantity</th>
+                            <th>Alamat Part</th>
+                            <th>Display</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stockTable">
+                        <tr class="empty-state">
+                            <td colspan="8">Belum ada data. Tambahkan item baru untuk memulai.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Catalog Section -->
+        <section id="catalog" class="section">
+            <div class="section-header">
+                <h2>Catalog Gambar Sparepart</h2>
+            </div>
+            <div class="catalog-upload">
+                <form onsubmit="addCatalogImage(event)" class="catalog-form">
+                    <div class="form-group">
+                        <label for="catalogItemId">ID Sparepart</label>
+                        <input type="text" id="catalogItemId" placeholder="Masukkan ID sparepart (mis. SP-001)" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="catalogImage">Upload Gambar</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="catalogImage" accept="image/*" onchange="handleCatalogImageUpload(event)">
+                            <span class="file-label">Pilih Gambar (Max 2MB)</span>
+                        </div>
+                        <div id="catalogImagePreview" class="image-preview"></div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">➕ Simpan ke Catalog</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetCatalogForm()">🔄 Reset</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="gallery-container" id="galleryContainer">
+                <div class="empty-state">Belum ada gambar. Upload gambar saat menambah item atau gunakan form di atas.</div>
+            </div>
+        </section>
+
+        <!-- Add Item Section -->
+        <section id="addItem" class="section">
+            <div class="section-header">
+                <h2>Tambah Item Sparepart</h2>
+            </div>
+            <form class="form-container" onsubmit="addItem(event)">
+                <div class="form-group">
+                    <label for="itemId">ID Sparepart</label>
+                    <input type="text" id="itemId" placeholder="Contoh: SP-001" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemName">Nama Barang</label>
+                    <input type="text" id="itemName" placeholder="Nama sparepart" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemCustomer">Customer</label>
+                    <input type="text" id="itemCustomer" placeholder="Nama customer/departemen" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemQuantity">Quantity</label>
+                    <input type="number" id="itemQuantity" placeholder="Jumlah" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemAddress">Alamat Part</label>
+                    <input type="text" id="itemAddress" placeholder="Lokasi / alamat part">
+                </div>
+
+                <div class="form-group">
+                    <label for="itemBarcode">Barcode (Opsional)</label>
+                    <input type="text" id="itemBarcode" placeholder="Barcode item (opsional)">
+                </div>
+
+                <div class="form-group">
+                    <label for="barcodeFormat">Format Barcode</label>
+                    <select id="barcodeFormat">
+                        <option value="CODE128">CODE128 (Versatile)</option>
+                        <option value="EAN13">EAN-13 (13 digit)</option>
+                        <option value="UPC">UPC (12 digit)</option>
+                        <option value="CODE39">CODE39 (Alphanumeric)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemImage">Upload Gambar</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="itemImage" accept="image/*" onchange="handleImageUpload(event)">
+                        <span class="file-label">Pilih Gambar (Max 2MB)</span>
+                    </div>
+                    <div id="imagePreview" class="image-preview"></div>
+                </div>
+
+                <div class="qr-preview-section">
+                    <label>Preview QR Code</label>
+                    <div id="qrPreview" class="qr-preview-container">
+                        <p class="qr-placeholder">QR Code akan muncul setelah ditambahkan</p>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">➕ Tambah Item</button>
+                    <button type="reset" class="btn btn-secondary" onclick="resetForm()">🔄 Reset</button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <!-- Modal Detail -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Modal Edit -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h2>Edit Item</h2>
+            <form onsubmit="saveEdit(event)">
+                <div class="form-group">
+                    <label>ID Sparepart</label>
+                    <input type="text" id="editId" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Nama Barang</label>
+                    <input type="text" id="editName" required>
+                </div>
+                <div class="form-group">
+                    <label>Customer</label>
+                    <input type="text" id="editCustomer" required>
+                </div>
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="number" id="editQuantity" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Alamat Part</label>
+                    <input type="text" id="editAddress">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">💾 Simpan</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">❌ Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notificationContainer"></div>
+    </div>
+
+    <script src="login.js"></script>
+    <script src="sparepart.js"></script>
+</body>
+</html>
