@@ -314,17 +314,328 @@
             color: #999;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
+            .container {
+                padding: 15px;
+            }
+
             .demo-grid {
-                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            header {
+                padding: 20px;
+                margin-bottom: 20px;
             }
 
             header h1 {
-                font-size: 22px;
+                font-size: 24px;
+                margin-bottom: 8px;
+            }
+
+            .demo-card {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+                margin: 0 auto;
+            }
+
+            header {
+                padding: 16px;
+                margin-bottom: 16px;
+                border-radius: 8px;
+            }
+
+            header h1 {
+                font-size: 20px;
+                margin-bottom: 6px;
+            }
+
+            header p {
+                font-size: 12px;
+            }
+
+            .demo-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                margin-bottom: 16px;
+            }
+
+            .demo-card {
+                padding: 16px;
+                border-radius: 8px;
+                border-left-width: 4px;
+            }
+
+            .demo-card h2 {
+                font-size: 16px;
+                margin-bottom: 14px;
+            }
+
+            .demo-card h3 {
+                font-size: 12px;
+                margin-top: 10px;
+                margin-bottom: 8px;
+            }
+
+            .input-group {
+                margin-bottom: 12px;
+            }
+
+            .input-group label {
+                margin-bottom: 6px;
+                font-size: 13px;
+            }
+
+            .input-group input,
+            .input-group select {
+                padding: 10px 12px;
+                font-size: 14px;
+                border-radius: 5px;
             }
 
             .button-group {
                 flex-direction: column;
+                gap: 8px;
+                margin-top: 12px;
+            }
+
+            button {
+                padding: 11px 16px;
+                font-size: 13px;
+                border-radius: 5px;
+            }
+
+            .qr-display {
+                padding: 16px;
+                min-height: 200px;
+                margin: 12px 0;
+            }
+
+            #qrCodeGenerator canvas {
+                max-width: 180px;
+                height: auto;
+                padding: 8px;
+            }
+
+            .qr-info {
+                padding: 12px;
+                margin-top: 12px;
+                font-size: 13px;
+                line-height: 1.5;
+            }
+
+            .scan-result {
+                padding: 12px;
+                margin-top: 12px;
+                font-size: 13px;
+                min-height: 50px;
+            }
+
+            .result-success,
+            .result-error,
+            .result-info {
+                padding: 12px;
+                border-radius: 5px;
+                font-size: 13px;
+            }
+
+            .features {
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+
+            .features h2 {
+                font-size: 16px;
+                margin-bottom: 14px;
+            }
+
+            .feature-list {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .feature-item {
+                padding: 12px;
+                border-radius: 5px;
+                border-left-width: 3px;
+            }
+
+            .feature-item h4 {
+                font-size: 13px;
+                margin-bottom: 6px;
+            }
+
+            .feature-item p {
+                font-size: 12px;
+                line-height: 1.4;
+            }
+
+            .database-table {
+                font-size: 12px;
+                margin-top: 12px;
+            }
+
+            .database-table th,
+            .database-table td {
+                padding: 10px 8px;
+                font-size: 11px;
+            }
+
+            .status-in,
+            .status-out {
+                padding: 3px 6px;
+                font-size: 10px;
+            }
+
+            .quantity-badge {
+                padding: 3px 6px;
+                font-size: 10px;
+            }
+
+            .empty-state {
+                padding: 20px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            header {
+                padding: 12px;
+                margin-bottom: 12px;
+            }
+
+            header h1 {
+                font-size: 18px;
+                margin-bottom: 4px;
+            }
+
+            header p {
+                font-size: 11px;
+            }
+
+            .demo-grid {
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+
+            .demo-card {
+                padding: 12px;
+            }
+
+            .demo-card h2 {
+                font-size: 14px;
+                gap: 6px;
+                margin-bottom: 12px;
+            }
+
+            .demo-card h3 {
+                font-size: 11px;
+            }
+
+            .input-group {
+                margin-bottom: 10px;
+            }
+
+            .input-group label {
+                font-size: 12px;
+                margin-bottom: 5px;
+            }
+
+            .input-group input,
+            .input-group select {
+                padding: 9px 10px;
+                font-size: 13px;
+            }
+
+            .button-group {
+                gap: 6px;
+                margin-top: 10px;
+            }
+
+            button {
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+
+            .qr-display {
+                padding: 12px;
+                min-height: 170px;
+                margin: 10px 0;
+            }
+
+            #qrCodeGenerator canvas {
+                max-width: 150px;
+            }
+
+            .qr-info,
+            .scan-result {
+                padding: 10px;
+                font-size: 12px;
+            }
+
+            .result-success,
+            .result-error,
+            .result-info {
+                padding: 10px;
+                font-size: 12px;
+            }
+
+            .features {
+                padding: 12px;
+                margin-bottom: 12px;
+            }
+
+            .features h2 {
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+
+            .feature-list {
+                gap: 8px;
+            }
+
+            .feature-item {
+                padding: 10px;
+            }
+
+            .feature-item h4 {
+                font-size: 12px;
+                margin-bottom: 5px;
+            }
+
+            .feature-item p {
+                font-size: 11px;
+            }
+
+            .database-table {
+                font-size: 11px;
+            }
+
+            .database-table th,
+            .database-table td {
+                padding: 8px 6px;
+                font-size: 10px;
+            }
+
+            .status-in,
+            .status-out,
+            .quantity-badge {
+                padding: 2px 4px;
+                font-size: 9px;
+            }
+
+            .empty-state {
+                padding: 15px;
+                font-size: 11px;
             }
         }
 
