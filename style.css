@@ -2422,3 +2422,41 @@ body {
         transform: translateY(0);
     }
 }
+
+/* Mobile sidebar (off-canvas) and backdrop */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-120%);
+        transition: transform 0.28s ease;
+        width: 220px;
+        left: 0; /* keep left at 0 but translated off-canvas */
+        top: 72px;
+        height: calc(100vh - 72px);
+        box-shadow: none;
+    }
+
+    body.sidebar-open .sidebar {
+        transform: translateX(0);
+        box-shadow: 0 14px 40px rgba(0,0,0,0.35);
+        z-index: 9999;
+        background: #f8f9fa;
+    }
+
+    .sidebar-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        display: none;
+        z-index: 9998;
+        transition: opacity 0.25s ease;
+    }
+
+    body.sidebar-open .sidebar-backdrop {
+        display: block;
+    }
+}
+
+/* small adjustments for very small screens */
+@media (max-width: 420px) {
+    .sidebar { width: 200px; }
+}

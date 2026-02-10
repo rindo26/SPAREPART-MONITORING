@@ -260,11 +260,28 @@ document.addEventListener('keydown', resetSessionTimer);
 document.addEventListener('mousemove', resetSessionTimer);
 
 // ===== HAMBURGER MENU FUNCTION =====
+// ===== HAMBURGER & MOBILE SIDEBAR HANDLING =====
+// On desktop the button opens the account dropdown.
+// On mobile it opens the sidebar as an off-canvas drawer.
 function toggleHamburgerMenu() {
     const dropdown = document.getElementById('hamburgerDropdown');
-    if (dropdown) {
-        dropdown.classList.toggle('active');
+    const isMobile = window.innerWidth <= 768;
+
+    if (isMobile) {
+        // toggle mobile sidebar
+        document.body.classList.toggle('sidebar-open');
+        const backdrop = document.getElementById('mobileSidebarBackdrop');
+        if (backdrop) backdrop.style.display = document.body.classList.contains('sidebar-open') ? 'block' : 'none';
+    } else {
+        if (dropdown) dropdown.classList.toggle('active');
     }
+}
+
+// Close mobile sidebar (called from backdrop or programmatically)
+function closeMobileSidebar() {
+    document.body.classList.remove('sidebar-open');
+    const backdrop = document.getElementById('mobileSidebarBackdrop');
+    if (backdrop) backdrop.style.display = 'none';
 }
 
 // Update dropdown username when user logs in
@@ -282,14 +299,23 @@ function updateHamburgerMenuUser() {
     }
 }
 
-// Close hamburger menu when clicking outside
+// Close hamburger menu or mobile sidebar when clicking outside
 document.addEventListener('click', (e) => {
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const hamburgerDropdown = document.getElementById('hamburgerDropdown');
+    const sidebar = document.querySelector('.sidebar');
+    const backdrop = document.getElementById('mobileSidebarBackdrop');
     
     if (hamburgerBtn && hamburgerDropdown && !hamburgerBtn.contains(e.target) && !hamburgerDropdown.contains(e.target)) {
         hamburgerDropdown.classList.remove('active');
     }
+
+    // if mobile and clicked outside sidebar, close it
+    if (window.innerWidth <= 768 && sidebar && !sidebar.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+        closeMobileSidebar();
+    }
+    // if clicked the backdrop element itself, ensure sidebar closed
+    if (backdrop && e.target === backdrop) closeMobileSidebar();
 });
 
 // Log system status
