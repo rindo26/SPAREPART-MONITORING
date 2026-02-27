@@ -944,7 +944,7 @@ body {
     overflow-x: auto;
     display: block;
     -webkit-overflow-scrolling: touch;
-}
+
         border-radius: 6px !important;
     }
     .form-group label, .form-input, .form-group input, .form-group select {
@@ -982,7 +982,7 @@ body {
         max-width: 100% !important;
         max-height: 120px !important;
     }
-}
+    
 
 
 .inventory-table {
