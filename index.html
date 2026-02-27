@@ -57,10 +57,10 @@
         <div class="navbar-container">
             <div class="navbar-brand">
                 <span class="icon">
-                    <img src="673c0b02b4e6a4cc348369675d3f665e.webp " alt="Logo" class="brand-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block'">
+                    <img src=" foto ippi.PNG.webp" alt="Logo" class="brand-logo" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block'">
                     <span class="fallback"></span>
                 </span>
-                <h1>Sparepart Stock Monitoring</h1>
+                <h1>Sparepart Monitoring</h1>
             </div>
             <div class="navbar-stats">
                 <div class="stat-item">
@@ -79,6 +79,29 @@
                 <div class="hamburger-menu-container">
                     <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleHamburgerMenu()" title="Menu">≡</button>
                     <div class="hamburger-dropdown" id="hamburgerDropdown">
+                        <!-- Navigation Menu (Mobile) -->
+                        <div class="mobile-nav-menu">
+                            <button class="dropdown-item" onclick="showSection('inventory'); toggleHamburgerMenu()">
+                                <span class="item-icon">📋</span>
+                                <span class="item-text">Inventory</span>
+                            </button>
+                            <button class="dropdown-item" onclick="showSection('catalog'); toggleHamburgerMenu()">
+                                <span class="item-icon">🖼️</span>
+                                <span class="item-text">Catalog</span>
+                            </button>
+                            <button class="dropdown-item" onclick="showSection('addItem'); toggleHamburgerMenu()">
+                                <span class="item-icon">➕</span>
+                                <span class="item-text">Tambah Item</span>
+                            </button>
+                            <button class="dropdown-item" onclick="showSection('qrScanner'); toggleHamburgerMenu()">
+                                <span class="item-icon">📱</span>
+                                <span class="item-text">QR Scanner</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Divider -->
+                        <div class="dropdown-divider"></div>
+
                         <!-- Account Info -->
                         <div class="dropdown-header">
                             <div class="account-info">
@@ -115,8 +138,6 @@
             </div>
         </div>
     </nav>
-    
-    <div id="mobileSidebarBackdrop" class="sidebar-backdrop" onclick="closeMobileSidebar()"></div>
 
     <!-- Sidebar -->
     <div class="sidebar">
